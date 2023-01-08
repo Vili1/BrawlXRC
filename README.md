@@ -27,5 +27,6 @@ This tool allows you to change your ingame rendering resolution withouth changin
 ![image](https://user-images.githubusercontent.com/42891941/211206762-5f9cde22-ac6b-4797-ac18-479099076bde.png)
 - The UI elements are being renderend at the display/window default resolution, thats a screenshot from 480p.
 
-![image](https://user-images.githubusercontent.com/42891941/211214024-bbb04003-3b24-46e9-906e-cad21b50ed2e.png)
+![image](https://user-images.githubusercontent.com/42891941/211214210-6583a82c-1448-4f9d-990f-3d03d5fc2036.png)
+
 
