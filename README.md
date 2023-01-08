@@ -11,16 +11,21 @@ This tool allows you to change your ingame rendering resolution withouth changin
 # The test we're done on my integrated intel UHD 630.
 
 -FPS at 8K
+
 ![image](https://user-images.githubusercontent.com/42891941/211207001-f90add35-d5f3-4ff1-aedd-6ecb4fe3936c.png)
 
 -FPS at 4K
+
 ![image](https://user-images.githubusercontent.com/42891941/211206877-b8127aa5-95dd-4311-8cb4-c6e30044ec24.png)
 
 - FPS at 1080p
+
 ![image](https://user-images.githubusercontent.com/42891941/211206576-368a4b9c-5757-46b3-aadd-50cf9d207f22.png)
 
 - FPS at 720p
+
 ![image](https://user-images.githubusercontent.com/42891941/211206659-578f129d-192b-41fa-b771-d46e6a4b65e2.png)
 
 - FPS at 480p
+
 ![image](https://user-images.githubusercontent.com/42891941/211206762-5f9cde22-ac6b-4797-ac18-479099076bde.png)
