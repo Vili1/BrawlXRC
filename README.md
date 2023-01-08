@@ -3,6 +3,6 @@ Brawlhalla external resolution changer
 This tool allows you to change your ingame rendering resolution withouth changing the resolution of the UI elements.
 - [Donate on paypal](https://www.paypal.com/donate?hosted_button_id=PTRYHABP7FHGN)
 ### Usage
-Make surre that you are running tech-test version of brawl.
-Disable EAC by setting -noeac as a launch option on steam.
-Open the game then open BrawlXRC.
+- Make surre that you are running tech-test version of brawl.
+- Disable EAC by setting -noeac as a launch option on steam.
+- Open the game then open BrawlXRC.
