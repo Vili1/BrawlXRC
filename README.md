@@ -3,6 +3,7 @@ Brawlhalla external resolution changer
 This tool allows you to change your ingame rendering resolution withouth changing the resolution of the UI elements.
 - [Download precompiled executable](https://github.com/Vili1/BrawlXRC/releases)
 - [Donate on paypal](https://www.paypal.com/donate?hosted_button_id=PTRYHABP7FHGN)
+- [Download and install Microsoft Visual C++ Redistributable if you are getting any errors](https://aka.ms/vs/17/release/vc_redist.x86.exe)
 ### Usage
 - Make surre that you are running tech-test version of brawl.
 - Disable EAC by setting -noeac as a launch option on steam.
