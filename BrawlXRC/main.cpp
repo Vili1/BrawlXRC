@@ -42,7 +42,7 @@ void findGameWindowToHook()
     }
     else
     {
-        std::cout << "Unable to find Brawlhalla, Please make sure that you are in a game!" << std::endl;
+        std::cout << "Unable to find Brawlhalla, Please make sure that the game is opened!" << std::endl;
         Sleep(3000);
         exit(EXIT_FAILURE);
     }
@@ -145,6 +145,8 @@ int main()
             YtoScaleVal = YtoScaleValDef;
             menu();
         }
+
+        checkGameToExit();
     }
     
     return 0;
