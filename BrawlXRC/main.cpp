@@ -9,7 +9,8 @@ HWND hGameWindow = FindWindow(NULL, "Brawlhalla");
 DWORD pID = NULL;
 HANDLE processHandle = NULL;
 DWORD XtoScaleAddressCPY = NULL;
-int XtoScaleValDef, YtoScaleValDef, XtoScaleVal, YtoScaleVal = 0;
+int XtoScaleValDef, YtoScaleValDef, XtoScaleVal, YtoScaleVal, widthCPY, heightCPY = 0;
+int scale = 100;
 
 DWORD dwGetModuleBaseAddress(TCHAR* lpszModuleName, DWORD pID)
 {
@@ -94,16 +95,34 @@ void iniPRT()
     YtoScaleVal = YtoScaleValDef;
 }
 
+void resScale()
+{
+    float Fwidth = XtoScaleValDef;
+    float Fheight = YtoScaleValDef;
+    int pixel = Fwidth * Fheight / 100 * scale;
+    float Wratio = Fheight / Fwidth;
+    float Hratio = Fwidth / Fheight;
+    int width = sqrt(pixel / Wratio);
+    int height = sqrt(pixel / Hratio);
+
+    widthCPY = width;
+    heightCPY = height;
+}
+
 void menu()
 {
     system("cls");
-    std::cout << "Brawlhalla external resolution changer by Vili." << std::endl;
+    std::cout << "Brawlhalla external resolution changer by Vili" << std::endl;
     std::cout << "-----------------------------------------------------------" << std::endl;
-    std::cout << "Press delete to enter a custom resolution." << std::endl;
-    std::cout << "Press insert to reset the resolution to the default one." << std::endl;
+    std::cout << "Press delete to set a custom resolution" << std::endl;
+    std::cout << "Press insert to reset the resolution to the default one" << std::endl;
+    std::cout << "Press right shift to set a custom resolution scale%" << std::endl;
+    std::cout << "Press numpad + increase the resolution scale by 5%" << std::endl;
+    std::cout << "Press numpad - decrease the resolution scale by 5%" << std::endl;
     std::cout << "-----------------------------------------------------------" << std::endl;
     std::cout << "Default resolution:" << std::dec << XtoScaleValDef << "x" << YtoScaleValDef << std::endl;
     std::cout << "Current resolution:" << std::dec << XtoScaleVal << "x" << YtoScaleVal << std::endl;
+    std::cout << "Current resolution scale in %:" << std::dec << scale << std::endl;
     std::cout << "-----------------------------------------------------------" << std::endl;
 }
 
@@ -123,7 +142,6 @@ int main()
 
         if (GetAsyncKeyState(VK_DELETE)) // delete
         {
-            
             std::cout << "Enter width:"<< std::endl;
             std::cin >> XtoScaleVal;
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY), &XtoScaleVal, sizeof(int), 0);
@@ -143,6 +161,47 @@ int main()
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY + 4), &YtoScaleValDef, sizeof(int), 0);
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY - 128), &YtoScaleValDef, sizeof(int), 0);
             YtoScaleVal = YtoScaleValDef;
+            scale = 100;
+            menu();
+        }
+
+        if (GetAsyncKeyState(VK_RSHIFT)) //right shift
+        {
+            std::cout << "Enter custom %:" << std::endl;
+            std::cin >> scale;
+            resScale();
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY), &widthCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY - 132), &widthCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY + 4), &heightCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY - 128), &heightCPY, sizeof(int), 0);
+            XtoScaleVal = widthCPY;
+            YtoScaleVal = heightCPY;
+            menu();
+        }
+
+        if (GetAsyncKeyState(VK_ADD)) //numpad +
+        {
+            scale += 5;
+            resScale();
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY), &widthCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY - 132), &widthCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY + 4), &heightCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY - 128), &heightCPY, sizeof(int), 0);
+            XtoScaleVal = widthCPY;
+            YtoScaleVal = heightCPY;
+            menu();
+        }
+
+        if (GetAsyncKeyState(VK_SUBTRACT)) // numpad -
+        {
+            scale -= 5;
+            resScale();
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY), &widthCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY - 132), &widthCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY + 4), &heightCPY, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddressCPY - 128), &heightCPY, sizeof(int), 0);
+            XtoScaleVal = widthCPY;
+            YtoScaleVal = heightCPY;
             menu();
         }
 
