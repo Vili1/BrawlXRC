@@ -35,7 +35,7 @@ DWORD dwGetModuleBaseAddress(TCHAR* lpszModuleName, DWORD pID)
     return dwModuleBaseAddress;
 }
 
-void findGameWindowToHook()
+void findGameWindow()
 {
     if (hGameWindow != NULL)
     {
@@ -49,7 +49,7 @@ void findGameWindowToHook()
     }
 }
 
-void checkProcessHandle()
+void openProcessHandle()
 {
     GetWindowThreadProcessId(hGameWindow, &pID);
     processHandle = OpenProcess(PROCESS_ALL_ACCESS, FALSE, pID);
@@ -75,24 +75,66 @@ void iniPRT()
 {
     char moduleName[] = "Adobe AIR.dll";
     DWORD gameBaseAddress = dwGetModuleBaseAddress(_T(moduleName), pID);
-    DWORD offsetGameToBaseAddress = 0x012DAACC;
-    std::array<DWORD, 6> XtoScaleOffsets{ 0x170, 0x268, 0x78, 0x50, 0x34, 0x2B8 };
     DWORD baseAddress = NULL;
 
-    ReadProcessMemory(processHandle, (LPVOID)(gameBaseAddress + offsetGameToBaseAddress), &baseAddress, sizeof(baseAddress), NULL);
-    DWORD XtoScaleAddress = baseAddress;
-    for (int i = 0; i < XtoScaleOffsets.size() - 1; i++)
+    int ptrSelect = 0;
+    std::cout << "-----------------------------------------------------------" << std::endl;
+    std::cout << "Select a version" << std::endl;
+    std::cout << "-----------------------------------------------------------" << std::endl;
+    std::cout << "1. Normal version" << std::endl;
+    std::cout << "2. Tech-test version" << std::endl;
+    std::cout << "-----------------------------------------------------------" << std::endl;
+    std::cin >> ptrSelect;
+
+    if (ptrSelect == 1)
     {
-        ReadProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + XtoScaleOffsets.at(i)), &XtoScaleAddress, sizeof(XtoScaleAddress), NULL);
+        SetConsoleTitle("Normal version");
+        DWORD offsetGameToBaseAddress = 0x01331740;
+        std::array<DWORD, 8> XtoScaleOffsets{ 0x28, 0x14, 0x154, 0x14, 0x78, 0x50, 0x34, 0x2A4 };
+
+        ReadProcessMemory(processHandle, (LPVOID)(gameBaseAddress + offsetGameToBaseAddress), &baseAddress, sizeof(baseAddress), NULL);
+        DWORD XtoScaleAddress = baseAddress;
+        for (int i = 0; i < XtoScaleOffsets.size() - 1; i++)
+        {
+            ReadProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + XtoScaleOffsets.at(i)), &XtoScaleAddress, sizeof(XtoScaleAddress), NULL);
+        }
+        XtoScaleAddress += XtoScaleOffsets.at(XtoScaleOffsets.size() - 1);
+        XtoScaleAddressCPY = XtoScaleAddress;
+
+        ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddressCPY), &XtoScaleValDef, sizeof(int), NULL);
+        ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddressCPY + 4), &YtoScaleValDef, sizeof(int), NULL);
+
+        XtoScaleVal = XtoScaleValDef;
+        YtoScaleVal = YtoScaleValDef;
+
     }
-    XtoScaleAddress += XtoScaleOffsets.at(XtoScaleOffsets.size() - 1);
-    XtoScaleAddressCPY = XtoScaleAddress;
+    else if (ptrSelect == 2)
+    {
+        SetConsoleTitle("Tech-test version");
+        DWORD offsetGameToBaseAddress = 0x01331740;
+        std::array<DWORD, 8> XtoScaleOffsets{ 0x28, 0x14, 0x154, 0x14, 0x78, 0x50, 0x34, 0x2A4 };
 
-    ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddressCPY), &XtoScaleValDef, sizeof(int), NULL);
-    ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddressCPY + 4), &YtoScaleValDef, sizeof(int), NULL);
+        ReadProcessMemory(processHandle, (LPVOID)(gameBaseAddress + offsetGameToBaseAddress), &baseAddress, sizeof(baseAddress), NULL);
+        DWORD XtoScaleAddress = baseAddress;
+        for (int i = 0; i < XtoScaleOffsets.size() - 1; i++)
+        {
+            ReadProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + XtoScaleOffsets.at(i)), &XtoScaleAddress, sizeof(XtoScaleAddress), NULL);
+        }
+        XtoScaleAddress += XtoScaleOffsets.at(XtoScaleOffsets.size() - 1);
+        XtoScaleAddressCPY = XtoScaleAddress;
 
-    XtoScaleVal = XtoScaleValDef;
-    YtoScaleVal = YtoScaleValDef;
+        ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddressCPY), &XtoScaleValDef, sizeof(int), NULL);
+        ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddressCPY + 4), &YtoScaleValDef, sizeof(int), NULL);
+
+        XtoScaleVal = XtoScaleValDef;
+        YtoScaleVal = YtoScaleValDef;
+    }
+    else
+    {
+        std::cout << "Invalid value" << std::endl;
+        Sleep(3000);
+        exit(EXIT_FAILURE);
+    }
 }
 
 void resScale()
@@ -128,12 +170,12 @@ void menu()
 
 int main()
 {
-    findGameWindowToHook();
+    findGameWindow();
 
-    checkProcessHandle();
-
-    iniPRT();
+    openProcessHandle();
     
+    iniPRT();
+
     menu();
 
     while (true)
