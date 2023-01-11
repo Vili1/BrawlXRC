@@ -111,8 +111,8 @@ void iniPRT()
     else if (ptrSelect == 2)
     {
         SetConsoleTitle("Tech-test version");
-        DWORD offsetGameToBaseAddress = 0x01331740;
-        std::array<DWORD, 8> XtoScaleOffsets{ 0x28, 0x14, 0x154, 0x14, 0x78, 0x50, 0x34, 0x2A4 };
+        DWORD offsetGameToBaseAddress = 0x012DAACC;
+        std::array<DWORD, 6> XtoScaleOffsets{ 0x170, 0x268, 0x78, 0x50, 0x34, 0x2B8 };
 
         ReadProcessMemory(processHandle, (LPVOID)(gameBaseAddress + offsetGameToBaseAddress), &baseAddress, sizeof(baseAddress), NULL);
         DWORD XtoScaleAddress = baseAddress;
