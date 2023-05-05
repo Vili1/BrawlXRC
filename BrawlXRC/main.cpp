@@ -8,7 +8,7 @@ HWND hGameWindow = FindWindow(NULL, "Brawlhalla");
 char moduleName[] = "Adobe AIR.dll";
 DWORD pID = NULL;
 HANDLE processHandle = NULL;
-DWORD XtoScaleAddress = NULL;
+uintptr_t XtoScaleAddress = NULL;
 int XtoScaleValDef, YtoScaleValDef, XtoScaleVal, YtoScaleVal;
 int scale = 100;
 
@@ -18,7 +18,6 @@ uintptr_t dwGetModuleBaseAddress(TCHAR* lpszModuleName, uintptr_t pID)
     HANDLE hSnapshot = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE, pID);
     MODULEENTRY32 ModuleEntry32 = { 0 };
     ModuleEntry32.dwSize = sizeof(MODULEENTRY32);
-
     if (Module32First(hSnapshot, &ModuleEntry32))
     {
         do
