@@ -8,6 +8,7 @@ This tool allows you to change your ingame rendering resolution withouth changin
 - Make surre that you are running tech-test version of brawl.
 - Disable EAC by setting -noeac as a launch option on steam.
 - Open the game then open BrawlXRC.
+- Note, the max supported resolution is 16384x16384.
 # FPS improvements.
 # The test we're done on my integrated intel UHD 630.
 
