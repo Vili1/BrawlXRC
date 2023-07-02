@@ -4,6 +4,7 @@
 #include <tchar.h> 
 #include <vector>
 
+//some global vars
 HWND hGameWindow = FindWindow(NULL, "Brawlhalla");
 char moduleName[] = "Adobe AIR.dll";
 DWORD pID = NULL;
@@ -12,6 +13,7 @@ uintptr_t XtoScaleAddress = NULL;
 int XtoScaleValDef, YtoScaleValDef, XtoScaleVal, YtoScaleVal;
 int scale = 100;
 
+//gets the base addr of the module
 uintptr_t dwGetModuleBaseAddress(TCHAR* lpszModuleName, uintptr_t pID)
 {
     uintptr_t dwModuleBaseAddress = 0;
@@ -34,7 +36,7 @@ uintptr_t dwGetModuleBaseAddress(TCHAR* lpszModuleName, uintptr_t pID)
     return dwModuleBaseAddress;
 }
 
-
+//finds the game window and spits out errors if its not fond
 void findGameWindow()
 {
     if (hGameWindow != NULL)
@@ -57,6 +59,7 @@ void findGameWindow()
     }
 }
 
+//closes the pogram when the game isn't open
 void checkGameToExit()
 {
     HWND hGameWindowToExit = FindWindow(NULL, "Brawlhalla");
@@ -67,6 +70,7 @@ void checkGameToExit()
     }
 }
 
+//my crappy function that reads a multilevel pointer
 uintptr_t iniPRT(char moduleName[], uintptr_t offsetGameToBaseAddress, std::vector<uintptr_t> Offsets)
 {
     uintptr_t gameBaseAddress = dwGetModuleBaseAddress(_T(moduleName), pID);
@@ -81,6 +85,7 @@ uintptr_t iniPRT(char moduleName[], uintptr_t offsetGameToBaseAddress, std::vect
     return Address;
 }
 
+//my crappy res sacle function that calculates the resolution based on a % scale
 std::pair<int, int> resScale(float Fwidth, float Fheight)
 {
     int pixel = Fwidth * Fheight / 100 * scale;
@@ -91,6 +96,7 @@ std::pair<int, int> resScale(float Fwidth, float Fheight)
     return std::make_pair(width, height);
 }
 
+//the menu function, just a crappy cout stuff 
 void menu()
 {
     system("cls");
@@ -112,6 +118,7 @@ int main()
 {
     findGameWindow();
 
+    //select game version
     int ptrSelect = 0;
     std::cout << "-----------------------------------------------------------" << std::endl;
     std::cout << "Select a version" << std::endl;
@@ -120,11 +127,9 @@ int main()
     std::cout << "2. Tech-test version" << std::endl;
     std::cout << "-----------------------------------------------------------" << std::endl;
     std::cin >> ptrSelect;
-
     if (ptrSelect == 1)
     {
         SetConsoleTitle("Normal version");
-
         XtoScaleAddress = iniPRT(moduleName, 0x01331740, { 0x28, 0x14, 0x154, 0x14, 0x78, 0x50, 0x34, 0x2A4 });
 
     }
@@ -141,17 +146,21 @@ int main()
         return 1;
     }
 
+    //reading the game resolution and storing it to X and Y ScaleValDef so we can reset back to default res
     ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddress), &XtoScaleValDef, sizeof(int), NULL);
     ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddress + 4), &YtoScaleValDef, sizeof(int), NULL);
+    //copying the def res to new variables that can be modified throughout the code
     XtoScaleVal = XtoScaleValDef;
     YtoScaleVal = YtoScaleValDef;
     menu();
 
+    //main loop
     while (true)
     {
         Sleep(100);
 
-        if (GetAsyncKeyState(VK_DELETE)) // delete
+        //set custom res
+        if (GetAsyncKeyState(VK_DELETE))
         {
             std::cout << "Enter width:"<< std::endl;
             std::cin >> XtoScaleVal;
@@ -164,7 +173,8 @@ int main()
             menu();
         }
 
-        if (GetAsyncKeyState(VK_INSERT)) // insert
+        //reset defaults
+        if (GetAsyncKeyState(VK_INSERT))
         {
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &XtoScaleValDef, sizeof(int), 0);
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 132), &XtoScaleValDef, sizeof(int), 0);
@@ -176,7 +186,8 @@ int main()
             menu();
         }
 
-        if (GetAsyncKeyState(VK_RSHIFT)) //right shift
+        //custom % scale
+        if (GetAsyncKeyState(VK_RSHIFT))
         {
             std::cout << "Enter custom %:" << std::endl;
             std::cin >> scale;
@@ -190,7 +201,8 @@ int main()
             menu();
         }
 
-        if (GetAsyncKeyState(VK_ADD)) //numpad +
+        //scale up res
+        if (GetAsyncKeyState(VK_ADD))
         {
             scale += 5;
             std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
@@ -203,7 +215,8 @@ int main()
             menu();
         }
 
-        if (GetAsyncKeyState(VK_SUBTRACT)) // numpad -
+        //scale down rse
+        if (GetAsyncKeyState(VK_SUBTRACT))
         {
             scale -= 5;
             std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
