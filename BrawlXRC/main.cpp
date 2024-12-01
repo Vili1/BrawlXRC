@@ -118,33 +118,7 @@ int main()
 {
     findGameWindow();
 
-    //select game version
-    int ptrSelect = 0;
-    std::cout << "-----------------------------------------------------------" << std::endl;
-    std::cout << "Select a version" << std::endl;
-    std::cout << "-----------------------------------------------------------" << std::endl;
-    std::cout << "1. Normal version" << std::endl;
-    std::cout << "2. Tech-test version" << std::endl;
-    std::cout << "-----------------------------------------------------------" << std::endl;
-    std::cin >> ptrSelect;
-    if (ptrSelect == 1)
-    {
-        SetConsoleTitle("Normal version");
-        XtoScaleAddress = iniPRT(moduleName, 0x01331740, { 0x28, 0x14, 0x154, 0x14, 0x78, 0x50, 0x34, 0x2A4 });
-
-    }
-    else if (ptrSelect == 2)
-    {
-        SetConsoleTitle("Tech-test version");
-        XtoScaleAddress = iniPRT(moduleName, 0x012DAACC, { 0x170, 0x268, 0x78, 0x50, 0x34, 0x2B8 });
-
-    }
-    else
-    {
-        std::cout << "Invalid value" << std::endl;
-        Sleep(3000);
-        return 1;
-    }
+    XtoScaleAddress = iniPRT(moduleName, 0x01219038, { 0x288, 0x3D0, 0x1C0, 0x100, 0x408 });
 
     //reading the game resolution and storing it to X and Y ScaleValDef so we can reset back to default res
     ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddress), &XtoScaleValDef, sizeof(int), NULL);
@@ -165,11 +139,11 @@ int main()
             std::cout << "Enter width:"<< std::endl;
             std::cin >> XtoScaleVal;
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &XtoScaleVal, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 132), &XtoScaleVal, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &XtoScaleVal, sizeof(int), 0);
             std::cout << "Enter height:" << std::endl;
             std::cin >> YtoScaleVal;
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &YtoScaleVal, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 128), &YtoScaleVal, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &YtoScaleVal, sizeof(int), 0);
             menu();
         }
 
@@ -177,10 +151,10 @@ int main()
         if (GetAsyncKeyState(VK_INSERT))
         {
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &XtoScaleValDef, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 132), &XtoScaleValDef, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &XtoScaleValDef, sizeof(int), 0);
             XtoScaleVal = XtoScaleValDef;
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &YtoScaleValDef, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 128), &YtoScaleValDef, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &YtoScaleValDef, sizeof(int), 0);
             YtoScaleVal = YtoScaleValDef;
             scale = 100;
             menu();
@@ -193,9 +167,9 @@ int main()
             std::cin >> scale;
             std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 132), &Scaleresult.first, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 128), &Scaleresult.second, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
             XtoScaleVal = Scaleresult.first;
             YtoScaleVal = Scaleresult.second;
             menu();
@@ -207,9 +181,9 @@ int main()
             scale += 5;
             std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 132), &Scaleresult.first, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 128), &Scaleresult.second, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
             XtoScaleVal = Scaleresult.first;
             YtoScaleVal = Scaleresult.second;
             menu();
@@ -221,9 +195,9 @@ int main()
             scale -= 5;
             std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 132), &Scaleresult.first, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
             WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 128), &Scaleresult.second, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
             XtoScaleVal = Scaleresult.first;
             YtoScaleVal = Scaleresult.second;
             menu();
@@ -235,6 +209,6 @@ int main()
     return 0;
 }
 //XtoScaleAddress= XtoScaleAddressCPY
-//Xinternal = XtoScaleAddressCPY - 132;
+//Xinternal = XtoScaleAddressCPY - 152;
 //YtoScale = XtoScaleAddressCPY + 4;
-//Yinternal = XtoScaleAddressCPY - 128;
+//Yinternal = XtoScaleAddressCPY - 148;
