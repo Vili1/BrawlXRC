@@ -5,7 +5,6 @@ This tool allows you to change your ingame rendering resolution withouth changin
 - [Download precompiled executable](https://github.com/Vili1/BrawlXRC/releases)
 - [Download and install Microsoft Visual C++ Redistributable x86 if you are getting any errors](https://aka.ms/vs/17/release/vc_redist.x86.exe)
 ### Usage
-- Disable EAC by setting -noeac as a launch option on steam.
 - Open the game then open BrawlXRC.
 - Note, the max supported resolution is 16384x16384.
 # FPS improvements.
