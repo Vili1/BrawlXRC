@@ -10,7 +10,7 @@ char moduleName[] = "Adobe AIR.dll";
 DWORD pID = NULL;
 HANDLE processHandle = NULL;
 uintptr_t XtoScaleAddress = NULL;
-int XtoScaleValDef, YtoScaleValDef, XtoScaleVal, YtoScaleVal;
+int XtoScaleValDef, YtoScaleValDef, XtoScaleVal, YtoScaleVal, Resmismatch;
 int scale = 100;
 
 //gets the base addr of the module
@@ -65,7 +65,9 @@ void checkGameToExit()
     HWND hGameWindowToExit = FindWindow(NULL, "Brawlhalla");
     if (hGameWindowToExit == NULL)
     {
+        std::cout << "[!] Game closed, cleaning up!" << std::endl;
         CloseHandle(processHandle);
+        Sleep(3000);
         exit(EXIT_FAILURE);
     }
 }
@@ -112,6 +114,7 @@ void menu()
     std::cout << "Current resolution:" << std::dec << XtoScaleVal << "x" << YtoScaleVal << std::endl;
     std::cout << "Current resolution scale in %:" << std::dec << scale << std::endl;
     std::cout << "-----------------------------------------------------------" << std::endl;
+    Resmismatch = XtoScaleVal;
 }
 
 int main()
@@ -131,7 +134,7 @@ int main()
     //main loop
     while (true)
     {
-        Sleep(100);
+        ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddress), &Resmismatch, sizeof(int), NULL);
 
         //set custom res
         if (GetAsyncKeyState(VK_DELETE))
@@ -203,7 +206,17 @@ int main()
             menu();
         }
 
+        if (Resmismatch != XtoScaleVal)
+        {
+            std::cout << "[!] Resolution mismatch detected, attempting a fix" << std::endl;
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &XtoScaleVal, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &XtoScaleVal, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &YtoScaleVal, sizeof(int), 0);
+            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &YtoScaleVal, sizeof(int), 0);
+        }
+
         checkGameToExit();
+        Sleep(1000);
     }
     
     return 0;
