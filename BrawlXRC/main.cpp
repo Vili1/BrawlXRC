@@ -117,8 +117,10 @@ void menu()
     Resmismatch = XtoScaleVal;
 }
 
+
 int main()
 {
+    SetConsoleTitleA("Brawlhalla external resolution changer");
     findGameWindow();
 
     XtoScaleAddress = iniPRT(moduleName, 0x01219038, { 0x288, 0x3D0, 0x1C0, 0x100, 0x408 });
@@ -136,76 +138,80 @@ int main()
     {
         ReadProcessMemory(processHandle, (LPCVOID)(XtoScaleAddress), &Resmismatch, sizeof(int), NULL);
 
-        //set custom res
-        if (GetAsyncKeyState(VK_DELETE))
+        while ((GetForegroundWindow() == FindWindow(NULL, "Brawlhalla external resolution changer")))
         {
-            std::cout << "Enter width:"<< std::endl;
-            std::cin >> XtoScaleVal;
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &XtoScaleVal, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &XtoScaleVal, sizeof(int), 0);
-            std::cout << "Enter height:" << std::endl;
-            std::cin >> YtoScaleVal;
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &YtoScaleVal, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &YtoScaleVal, sizeof(int), 0);
-            menu();
+            //set custom res
+            if (GetAsyncKeyState(VK_DELETE))
+            {
+                std::cout << "Enter width:" << std::endl;
+                std::cin >> XtoScaleVal;
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &XtoScaleVal, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &XtoScaleVal, sizeof(int), 0);
+                std::cout << "Enter height:" << std::endl;
+                std::cin >> YtoScaleVal;
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &YtoScaleVal, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &YtoScaleVal, sizeof(int), 0);
+                menu();
+            }
+
+            //reset defaults
+            if (GetAsyncKeyState(VK_INSERT))
+            {
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &XtoScaleValDef, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &XtoScaleValDef, sizeof(int), 0);
+                XtoScaleVal = XtoScaleValDef;
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &YtoScaleValDef, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &YtoScaleValDef, sizeof(int), 0);
+                YtoScaleVal = YtoScaleValDef;
+                scale = 100;
+                menu();
+            }
+
+            //custom % scale
+            if (GetAsyncKeyState(VK_RSHIFT))
+            {
+                std::cout << "Enter custom %:" << std::endl;
+                std::cin >> scale;
+                std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
+                XtoScaleVal = Scaleresult.first;
+                YtoScaleVal = Scaleresult.second;
+                menu();
+            }
+
+            //scale up res
+            if (GetAsyncKeyState(VK_ADD))
+            {
+                scale += 5;
+                std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
+                XtoScaleVal = Scaleresult.first;
+                YtoScaleVal = Scaleresult.second;
+                menu();
+            }
+
+            //scale down rse
+            if (GetAsyncKeyState(VK_SUBTRACT))
+            {
+                scale -= 5;
+                std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
+                WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
+                XtoScaleVal = Scaleresult.first;
+                YtoScaleVal = Scaleresult.second;
+                menu();
+            }
         }
 
-        //reset defaults
-        if (GetAsyncKeyState(VK_INSERT))
-        {
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &XtoScaleValDef, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &XtoScaleValDef, sizeof(int), 0);
-            XtoScaleVal = XtoScaleValDef;
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &YtoScaleValDef, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &YtoScaleValDef, sizeof(int), 0);
-            YtoScaleVal = YtoScaleValDef;
-            scale = 100;
-            menu();
-        }
-
-        //custom % scale
-        if (GetAsyncKeyState(VK_RSHIFT))
-        {
-            std::cout << "Enter custom %:" << std::endl;
-            std::cin >> scale;
-            std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
-            XtoScaleVal = Scaleresult.first;
-            YtoScaleVal = Scaleresult.second;
-            menu();
-        }
-
-        //scale up res
-        if (GetAsyncKeyState(VK_ADD))
-        {
-            scale += 5;
-            std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
-            XtoScaleVal = Scaleresult.first;
-            YtoScaleVal = Scaleresult.second;
-            menu();
-        }
-
-        //scale down rse
-        if (GetAsyncKeyState(VK_SUBTRACT))
-        {
-            scale -= 5;
-            std::pair<int, int> Scaleresult = resScale(XtoScaleValDef, YtoScaleValDef);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 152), &Scaleresult.first, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress + 4), &Scaleresult.second, sizeof(int), 0);
-            WriteProcessMemory(processHandle, (LPVOID)(XtoScaleAddress - 148), &Scaleresult.second, sizeof(int), 0);
-            XtoScaleVal = Scaleresult.first;
-            YtoScaleVal = Scaleresult.second;
-            menu();
-        }
-
+        //Resolution mismatch detected
         if (Resmismatch != XtoScaleVal)
         {
             std::cout << "[!] Resolution mismatch detected, attempting a fix" << std::endl;
